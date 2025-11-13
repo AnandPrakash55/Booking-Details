@@ -15,15 +15,15 @@ const app = express();
 // ✅ CORS CONFIG – ALLOW LOCAL + NETLIFY + RENDER
 // ===================================================
 const allowedOrigins = [
-  "http://localhost:5173",                        // Local frontend (development)
-  "https://booking-detail.netlify.app",           // Netlify frontend
-  "https://booking-details-z05f.onrender.com"     // Render backend URL
+  "http://localhost:5173",                          // Local: Vite frontend
+  "https://book-deal.netlify.app",                  // Netlify frontend
+  "https://booking-details-sz6s.onrender.com"       // Render backend
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow API tools like Postman (no origin)
+      // Allow requests with no origin (Postman, curl)
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
@@ -44,9 +44,7 @@ app.use(express.json());
 // ===================================================
 app.use((req, res, next) => {
   console.log(
-    `📌 ${new Date().toISOString()} - ${req.method} ${req.path} - Origin: ${
-      req.headers.origin
-    }`
+    `📌 ${new Date().toISOString()} - ${req.method} ${req.path} - Origin: ${req.headers.origin}`
   );
   next();
 });
@@ -58,8 +56,8 @@ app.get("/", (req, res) => {
   res.json({
     message: "Bus Booking System API is running 🚀",
     version: "1.0.0",
-    frontend: "https://booking-detail.netlify.app",
-    backend: "https://booking-details-z05f.onrender.com",
+    frontend: "https://book-deal.netlify.app",
+    backend: "https://booking-details-sz6s.onrender.com",
     endpoints: {
       auth: "/api/auth",
       buses: "/api/buses",
@@ -93,3 +91,4 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
   console.log(`🚀 Server running on port ${PORT}...`)
 );
+
