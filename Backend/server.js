@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 
+// DB + Routes
 import "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import busRoutes from "./routes/busRoutes.js";
@@ -10,20 +11,19 @@ import bookingRoutes from "./routes/bookingRoutes.js";
 
 const app = express();
 
-// ----------------------------------------------------
-// ✅ CORS CONFIG – LOCAL + NETLIFY + RENDER SUPPORT
-// ----------------------------------------------------
+// ===================================================
+// ✅ CORS CONFIG – ALLOW LOCAL + NETLIFY + RENDER
+// ===================================================
 const allowedOrigins = [
-  "http://localhost:5173",                   // Local frontend
-  "https://booking-detail.netlify.app",      // Netlify frontend
-  process.env.RENDER_FRONTEND_URL,           // optional env-based frontend
-  process.env.RENDER_BACKEND_URL             // optional env-based backend
-].filter(Boolean); // remove empty values
+  "http://localhost:5173",                        // Local frontend (development)
+  "https://booking-detail.netlify.app",           // Netlify frontend
+  "https://booking-details-z05f.onrender.com"     // Render backend URL
+];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (e.g. mobile apps, curl)
+      // Allow API tools like Postman (no origin)
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
@@ -39,26 +39,27 @@ app.use(
 
 app.use(express.json());
 
-// ----------------------------------------------------
+// ===================================================
 // 📝 LOGGING MIDDLEWARE
-// ----------------------------------------------------
+// ===================================================
 app.use((req, res, next) => {
   console.log(
-    `📌 ${new Date().toISOString()} - ${req.method} ${req.path} - Origin: ${req.headers.origin}`
+    `📌 ${new Date().toISOString()} - ${req.method} ${req.path} - Origin: ${
+      req.headers.origin
+    }`
   );
   next();
 });
 
-// ----------------------------------------------------
+// ===================================================
 // 🏠 ROOT ROUTE
-// ----------------------------------------------------
+// ===================================================
 app.get("/", (req, res) => {
   res.json({
-    message: "Bus Booking System API",
-    status: "running",
+    message: "Bus Booking System API is running 🚀",
     version: "1.0.0",
     frontend: "https://booking-detail.netlify.app",
-    backend: process.env.RENDER_BACKEND_URL,
+    backend: "https://booking-details-z05f.onrender.com",
     endpoints: {
       auth: "/api/auth",
       buses: "/api/buses",
@@ -67,16 +68,16 @@ app.get("/", (req, res) => {
   });
 });
 
-// ----------------------------------------------------
+// ===================================================
 // 📌 API ROUTES
-// ----------------------------------------------------
+// ===================================================
 app.use("/api/auth", authRoutes);
 app.use("/api/buses", busRoutes);
 app.use("/api/bookings", bookingRoutes);
 
-// ----------------------------------------------------
+// ===================================================
 // ❌ 404 HANDLER
-// ----------------------------------------------------
+// ===================================================
 app.use((req, res) => {
   res.status(404).json({
     error: "Route not found",
@@ -85,10 +86,10 @@ app.use((req, res) => {
   });
 });
 
-// ----------------------------------------------------
+// ===================================================
 // 🚀 START SERVER
-// ----------------------------------------------------
+// ===================================================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
-  console.log(`🚀 Server running on port ${PORT}`)
+  console.log(`🚀 Server running on port ${PORT}...`)
 );
