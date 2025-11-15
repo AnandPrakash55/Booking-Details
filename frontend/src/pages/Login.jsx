@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { authLogin } from "../services/api";
 import { FiMail, FiLock, FiEyeOff, FiEye } from "react-icons/fi";
@@ -104,9 +105,12 @@ export default function Login() {
 
         <p className="mt-6 text-center text-sm text-gray-500">
           Don't have an account?
-          <a className="text-blue-600 font-semibold ml-1 hover:underline cursor-pointer">
+          <Link
+            to="/signup"
+            className="text-blue-600 font-semibold ml-1 hover:underline cursor-pointer"
+          >
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>

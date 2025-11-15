@@ -78,6 +78,64 @@ export const login = async (req, res) => {
   }
 };
 
+// Public signup for owners only
+export const signup = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Name, email, and password are required" });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
+    // Check if email already exists
+    const [existing] = await db.promise().query("SELECT id FROM users WHERE email=?", [email]);
+    if (existing.length) {
+      return res.status(409).json({ message: "Email already exists" });
+    }
+
+    // Hash password
+    const hash = await bcrypt.hash(password, 10);
+
+    // Create owner account
+    const [result] = await db.promise().query(
+      "INSERT INTO users (name, email, password_hash, role) VALUES (?,?,?,?)",
+      [name, email, hash, "owner"]
+    );
+
+    console.log(`Owner signup successful: ${email}`);
+
+    // Auto-login after signup
+    const [newUser] = await db.promise().query("SELECT * FROM users WHERE id=?", [result.insertId]);
+    const user = newUser[0];
+
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: "Server configuration error" });
+    }
+
+    const token = sign({ id: user.id, role: user.role, bus_id: user.bus_id || null });
+
+    res.json({
+      message: "Owner registered successfully",
+      token,
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, bus_id: user.bus_id }
+    });
+  } catch (e) {
+    console.error("Signup error:", e);
+    res.status(500).json({ message: "Signup error", error: String(e) });
+  }
+};
+
 export const me = async (req, res) => {
   // req.user is from verifyToken
   res.json({ user: req.user });

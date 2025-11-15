@@ -1,9 +1,9 @@
 import axios from "axios";
 
-// ❗ Base URL MUST come from environment variable
-// remove localhost fallback to avoid Netlify calling localhost
+// Base URL from environment variable (for production)
+// Falls back to localhost for local development
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
 // Attach token automatically for every request
@@ -17,6 +17,7 @@ API.interceptors.request.use((config) => {
 });
 
 // ----------------- AUTH -------------------
+export const authSignup = (data) => API.post("/auth/signup", data);
 export const authLogin = (data) => API.post("/auth/login", data);
 export const authMe = () => API.get("/auth/me");
 
