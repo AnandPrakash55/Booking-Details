@@ -15,17 +15,18 @@ const app = express();
 // ✅ CORS CONFIG – ALLOW LOCAL + NETLIFY + RENDER
 // ===================================================
 const allowedOrigins = [
-  "http://localhost:5173",                          // Local: Vite frontend
-  "https://book-deal.netlify.app",                  // Netlify frontend
-  "https://booking-details-sz6s.onrender.com"       // Render backend
+  "http://localhost:5173",                      // Local Vite frontend
+  "https://book-detail.netlify.app",            // ✅ Correct Netlify URL
+  "https://booking-details-sz6s.onrender.com",  // Render backend
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (Postman, curl)
+      // Allow Postman / cURL (no origin header)
       if (!origin) return callback(null, true);
 
+      // Allow only whitelisted domains
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
@@ -56,7 +57,7 @@ app.get("/", (req, res) => {
   res.json({
     message: "Bus Booking System API is running 🚀",
     version: "1.0.0",
-    frontend: "https://book-deal.netlify.app",
+    frontend: "https://book-detail.netlify.app",
     backend: "https://booking-details-sz6s.onrender.com",
     endpoints: {
       auth: "/api/auth",
@@ -88,7 +89,6 @@ app.use((req, res) => {
 // 🚀 START SERVER
 // ===================================================
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  console.log(`🚀 Server running on port ${PORT}...`)
-);
-
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}...`);
+});
