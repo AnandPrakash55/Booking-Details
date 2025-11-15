@@ -1,9 +1,9 @@
 import axios from "axios";
 
 // Base URL from environment variable (for production)
-// Falls back to localhost for local development
+// Falls back to deployed backend for production
 const API = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL || "https://booking-details-sz6s.onrender.com",
+  baseURL: import.meta.env.VITE_BACKEND_URL || "https://booking-details-sz6s.onrender.com/api",
 });
 
 // Attach token automatically for every request
