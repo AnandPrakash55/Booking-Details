@@ -3,7 +3,7 @@ import axios from "axios";
 // Base URL from environment variable (for production)
 // Falls back to localhost for local development
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_BACKEND_URL || "https://booking-details-sz6s.onrender.com",
 });
 
 // Attach token automatically for every request
